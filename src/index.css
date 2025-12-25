@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+body {
+  /* background-color: #F8F9FA; */
+  background-color: whitesmoke;
+  color: #1F2937;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ============================================
+   COMPONENT STYLES
+   ============================================ */
+
+.card {
+  background-color: #FFFFFF;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  padding: 1.5rem;
+}
+
+.btn-primary {
+  background-color: #8B5CF6;
+  color: white;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #7C3AED;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
