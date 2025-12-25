@@ -1,3 +1,5 @@
+<img width="818" height="510" alt="Image" src="https://github.com/user-attachments/assets/e43ad761-b79c-439c-9bee-db519308c302" />
+
 # React + Vite
 
 # FlowvaHub Rewards System
@@ -36,3 +38,41 @@ GPU Acceleration: Animations (like the coinSpin) are offloaded to the GPU using 
 
 Accessibility (A11y): Semantic HTML combined with aria-progressbar and role="status" ensures the dashboard is fully navigable via screen readers.
 
+# Technologies Used
+
+# Frontend
+React 19: Utilizing the latest features, including native metadata hoisting for SEO and optimized concurrent rendering.
+
+Vite 7: Serving as the lightning-fast build tool and development server to ensure instant Hot Module Replacement (HMR).
+
+Tailwind CSS 4: A utility-first CSS framework for building a sleek, responsive, and maintainable UI with modern PostCSS nesting.
+
+Lucide React: Providing a consistent and accessible SVG icon library.
+
+React Router 7: Managing complex client-side routing and navigation states.
+
+React Hot Toast: Delivering lightweight, non-blocking notifications for user actions (like "Link Copied").
+
+# Backend & Infrastructure
+# Supabase:
+Powering the entire backend ecosystem, including:
+
+# PostgreSQL:
+A relational database with advanced triggers and functions.
+
+# GoTrue (Auth):
+Secure, JWT-based user authentication.
+
+# Realtime:
+WebSocket-based database listeners for instant UI updates.
+
+# PostCSS & Autoprefixer:
+Ensuring cross-browser compatibility and modern CSS transformations.
+
+# Dotenv:
+Managing secure environment variables for local development.
+
+
+# Performance & DX (Developer Experience)
+# ESLint: Enforcing high code quality and React best practices.
+# Module Type: Leveraging ES Modules ("type": "module") for modern JavaScript compatibility.
