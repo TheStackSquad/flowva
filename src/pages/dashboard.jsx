@@ -1,5 +1,4 @@
-// src/pages/dashboard.
-
+// src/pages/dashboard.jsx
 import React, { useState } from 'react';
 import Sidebar from '../components/layout/sidebar.jsx';
 import Header from '../components/layout/header.jsx';
@@ -17,12 +16,12 @@ import ReferralSection from '../features/rewards/components/referralSection.jsx'
 import RedemptionList from '../features/redemption/components/redemptionList.jsx';
 
 const Dashboard = () => {
-  
   const [activeTab, setActiveTab] = useState('earn');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
   const { rewards, loading, claimDaily, shareStack } = useRewards();
   const { totalReferrals, totalPoints, loading: statsLoading } = useReferralStats();
- const { profile } = useProfile();
+  const { profile } = useProfile();
 
   const renderEarnPointsContent = () => (
     <>
@@ -49,23 +48,22 @@ const Dashboard = () => {
 
       <EarnMorePointsSection onShare={shareStack} />
 
-
-<ReferralSection 
-  username={profile?.username}
-  referralCode={profile?.referral_code} // Pass the new code we generated
-  totalReferrals={totalReferrals}
-  totalPoints={totalPoints}
-  isLoading={statsLoading}
-/>
+      <ReferralSection 
+        username={profile?.username}
+        referralCode={profile?.referral_code}
+        totalReferrals={totalReferrals}
+        totalPoints={totalPoints}
+        isLoading={statsLoading}
+      />
     </>
   );
 
   return (
-    
     <div className="flex bg-app-bg min-h-screen">
-      <Sidebar />
-      <div className="flex-grow ml-64 px-6 py-3">
-        <Header userRewards={rewards} />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      
+      <div className="flex-grow md:ml-64 px-0 md:px-6 py-3">
+        <Header onMenuClick={() => setSidebarOpen(true)} userRewards={rewards} />
         <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
         <main className="mt-8">
           {activeTab === 'earn' ? renderEarnPointsContent() : <RedemptionList />}

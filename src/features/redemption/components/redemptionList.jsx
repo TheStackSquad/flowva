@@ -6,7 +6,6 @@ import { CreditCard, Send, Smartphone, Gift, BookOpen } from 'lucide-react';
 const RedemptionList = () => {
   const [activeFilter, setActiveFilter] = useState('all');
 
-  // Mock rewards data
   const rewards = [
     {
       id: 1,
@@ -74,7 +73,6 @@ const RedemptionList = () => {
     }
   ];
 
-  // Filter tabs configuration
   const filters = [
     { key: 'all', label: 'All Rewards', count: rewards.length },
     { key: 'unlocked', label: 'Unlocked', count: rewards.filter(r => r.status === 'unlocked').length },
@@ -82,7 +80,6 @@ const RedemptionList = () => {
     { key: 'coming-soon', label: 'Coming Soon', count: rewards.filter(r => r.status === 'coming-soon').length }
   ];
 
-  // Filter rewards based on active filter
   const filteredRewards = activeFilter === 'all' 
     ? rewards 
     : rewards.filter(reward => reward.status === activeFilter);
@@ -93,22 +90,23 @@ const RedemptionList = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 sm:p-6 lg:p-8">
+      
       {/* Section Header with Purple Border */}
       <div className="flex items-center gap-3">
         <span className="text-purple-600 text-3xl font-bold">|</span>
         <h2 className="text-2xl font-bold text-gray-900">Redeem Your Points</h2>
       </div>
 
-      {/* Filter Tabs */}
+      {/* Filter Tabs - Added 'overflow-x-auto' for horizontal scroll on small screens if tabs are too wide */}
       <div className="border-b border-gray-200">
-        <nav className="-mb-px flex gap-8" aria-label="Filter tabs">
+        <nav className="-mb-px flex gap-4 sm:gap-8 overflow-x-auto" aria-label="Filter tabs">
           {filters.map((filter) => (
             <button
               key={filter.key}
               onClick={() => setActiveFilter(filter.key)}
               className={`
-                relative py-3 px-1 font-medium text-sm transition-colors duration-150 focus:outline-none flex items-center gap-2
+                relative py-3 px-1 whitespace-nowrap font-medium text-sm transition-colors duration-150 focus:outline-none flex items-center gap-2
                 ${activeFilter === filter.key
                   ? 'text-purple-700' 
                   : 'text-gray-600 hover:text-purple-600 focus:text-purple-600'
@@ -140,8 +138,8 @@ const RedemptionList = () => {
         </nav>
       </div>
 
-      {/* Rewards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+      {/* Rewards Grid - Mobile Responsive Layout */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pt-4">
         {filteredRewards.map((reward) => (
           <RewardCard
             key={reward.id}

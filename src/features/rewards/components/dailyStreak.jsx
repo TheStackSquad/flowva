@@ -36,31 +36,31 @@ const DailyStreakCard = ({ streak = 0, lastClaimDate = '', onClaim, isLoadingDat
 
   return (
     <div 
-      className={`rounded-2xl flex flex-col bg-white items-center transition-all duration-300 h-full ${
-        isHovered ? 'transform -translate-y-1 shadow-lg shadow-purple-100' : 'shadow-sm border border-gray-100'
+      className={`rounded-2xl flex flex-col bg-white items-center transition-all duration-300 h-full px-2${
+        isHovered ? '-translate-y-1 shadow-lg shadow-purple-100' : 'shadow-sm border border-gray-100'
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="bg-blue-50 w-full rounded-t-2xl px-4 py-4 flex items-center gap-2 mb-2">
-        <Calendar className="h-5 w-5 text-cyan-500" />
+        <Calendar className="h-5 w-5 text-cyan-500" aria-hidden="true" />
         <h3 className="text-base font-medium text-gray-700">Daily Streak</h3>
       </div>
       
-      <div className="flex flex-col items-center justify-between px-6 py-6 w-full">
+      <div className="flex flex-col items-center justify-between px-4 sm:px-6 py-6 w-full">
         <div className="mb-6 w-full flex items-baseline justify-start">
-          <span className="text-5xl font-extrabold text-purple-600">
+          <span className="text-4xl sm:text-5xl font-extrabold text-purple-600" aria-live="polite">
             {isLoadingData ? "..." : streak}
           </span>
-          <span className="text-2xl font-bold text-purple-600 ml-2">days</span>
+          <span className="text-xl sm:text-2xl font-bold text-purple-600 ml-2">days</span>
         </div>
         
-        <div className="flex justify-between w-full mb-6">
+        <div className="flex justify-between w-full mb-6 gap-1 sm:gap-0">
           {days.map((day, index) => (
             <div
               key={`${day}-${index}`}
               className={`
-                h-9 w-9 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-200
+                h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center text-sm font-bold transition-colors duration-200
                 ${index === todayIndex
                   ? 'border-2 border-purple-600 bg-white text-purple-600 shadow-sm' 
                   : index < todayIndex 
@@ -68,6 +68,7 @@ const DailyStreakCard = ({ streak = 0, lastClaimDate = '', onClaim, isLoadingDat
                     : 'bg-gray-100 text-gray-400'
                 }
               `}
+              aria-label={`${day} ${index === todayIndex ? 'Today' : index < todayIndex ? 'Claimed' : 'Upcoming'}`}
             >
               {day}
             </div>
@@ -82,20 +83,21 @@ const DailyStreakCard = ({ streak = 0, lastClaimDate = '', onClaim, isLoadingDat
           onClick={handleClaim}
           disabled={isButtonDisabled}
           className={`
-            w-full py-4 px-6 rounded-2xl flex items-center justify-center gap-2 font-bold text-sm transition-all
+            w-full py-3 sm:py-4 px-4 sm:px-6 rounded-2xl flex items-center justify-center gap-2 font-bold text-sm transition-all
             ${hasClaimedToday 
               ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
               : 'bg-purple-600 text-white hover:bg-purple-700 active:scale-95 shadow-md shadow-purple-200'
             }
           `}
           aria-label={buttonText}
+          aria-busy={isSubmitting}
         >
           {isSubmitting ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
           ) : (
-            <Zap className={`h-4 w-4 ${hasClaimedToday ? 'text-gray-400' : 'fill-current'}`} />
+            <Zap className={`h-4 w-4 ${hasClaimedToday ? 'text-gray-400' : 'fill-current'}`} aria-hidden="true" />
           )}
-          {buttonText}
+          <span className="truncate">{buttonText}</span>
         </button>
       </div>
     </div>
