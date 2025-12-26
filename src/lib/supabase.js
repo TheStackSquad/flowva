@@ -24,17 +24,18 @@ export const getFullUserData = async (userId) => {
 
 export const claimDailyPoints = async (userId) => {
   try {
-    const { data, error } = await supabase
-      .rpc('claim_daily_points', { p_user_id: userId });
+    const { data, error } = await supabase.rpc("claim_daily_points", {
+      p_user_id: userId,
+    });
 
     if (error) throw error;
 
-    const result = data[0];
-    
+    const result = Array.isArray(data) ? data[0] : data;
+
     if (!result.success) {
-      return { 
-        data: null, 
-        error: { message: result.message } 
+      return {
+        data: null,
+        error: { message: result.message },
       };
     }
 
@@ -42,15 +43,15 @@ export const claimDailyPoints = async (userId) => {
       data: {
         points_awarded: result.points_awarded,
         new_streak: result.new_streak,
-        message: result.message
+        message: result.message,
       },
-      error: null
+      error: null,
     };
   } catch (err) {
-    console.error('Claim error:', err);
-    return { 
-      data: null, 
-      error: { message: err.message || 'Failed to claim points' } 
+    console.error("Claim error:", err);
+    return {
+      data: null,
+      error: { message: err.message || "Failed to claim points" },
     };
   }
 };
