@@ -3,23 +3,30 @@ import React, { useState } from 'react';
 import Sidebar from '../components/layout/sidebar.jsx';
 import Header from '../components/layout/header.jsx';
 import TabNavigation from '../components/layout/tabNavigation.jsx';
-
 import { useRewards } from '../features/rewards/hooks/useRewards';
 import { useReferralStats } from '../features/rewards/hooks/useReferralStats.jsx';
 import { useProfile } from '../features/profile/hooks/userProfile.jsx';
-
 import PointsBalanceCard from '../features/rewards/components/pointsBalance.jsx';
 import DailyStreakCard from '../features/rewards/components/dailyStreak.jsx';
 import ToolSpotlightCard from '../features/rewards/components/toolSpotlight.jsx';
 import EarnMorePointsSection from '../features/rewards/components/earnMorePoints.jsx';
 import ReferralSection from '../features/rewards/components/referralSection.jsx';
 import RedemptionList from '../features/redemption/components/redemptionList.jsx';
+import DailyStreakModal from '../common/modal/dailyStreakModal.jsx';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('earn');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
-  const { rewards, loading, claimDaily, shareStack } = useRewards();
+  const { 
+    rewards, 
+    loading, 
+    claimDaily, 
+    shareStack,
+    claimResult,
+    clearClaimResult 
+  } = useRewards();
+  
   const { totalReferrals, totalPoints, loading: statsLoading } = useReferralStats();
   const { profile } = useProfile();
 
@@ -65,10 +72,17 @@ const Dashboard = () => {
       <div className="flex-grow md:ml-64 px-0 md:px-6 py-3">
         <Header onMenuClick={() => setSidebarOpen(true)} userRewards={rewards} />
         <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
+        
         <main className="mt-8">
           {activeTab === 'earn' ? renderEarnPointsContent() : <RedemptionList />}
         </main>
       </div>
+
+      <DailyStreakModal
+        isOpen={!!claimResult && claimResult.success}
+        onClose={clearClaimResult}
+        points={claimResult?.pointsAwarded}
+      />
     </div>
   );
 };

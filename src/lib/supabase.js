@@ -22,8 +22,37 @@ export const getFullUserData = async (userId) => {
     .single();
 };
 
-export const claimDailyPoints = async () => {
-  return await supabase.rpc("claim_daily_points");
+export const claimDailyPoints = async (userId) => {
+  try {
+    const { data, error } = await supabase
+      .rpc('claim_daily_points', { p_user_id: userId });
+
+    if (error) throw error;
+
+    const result = data[0];
+    
+    if (!result.success) {
+      return { 
+        data: null, 
+        error: { message: result.message } 
+      };
+    }
+
+    return {
+      data: {
+        points_awarded: result.points_awarded,
+        new_streak: result.new_streak,
+        message: result.message
+      },
+      error: null
+    };
+  } catch (err) {
+    console.error('Claim error:', err);
+    return { 
+      data: null, 
+      error: { message: err.message || 'Failed to claim points' } 
+    };
+  }
 };
 
 export const recordShare = async (shareType, platform) => {

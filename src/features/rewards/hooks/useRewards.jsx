@@ -12,6 +12,7 @@ export function useRewards() {
     transactions: [],
   });
   const [loading, setLoading] = useState(true);
+  const [claimResult, setClaimResult] = useState(null);
 
   // Optimized Fetch: Get everything in one go
   const fetchAllData = useCallback(async () => {
@@ -33,7 +34,7 @@ export function useRewards() {
       });
     } catch (err) {
       console.error("Fetch Error:", err.message);
-      toast.error("Sync failed");
+      toast.error("Failed to sync rewards data");
     } finally {
       setLoading(false);
     }
@@ -45,16 +46,33 @@ export function useRewards() {
 
     fetchAllData();
 
-    // WOW FACTOR: Listen for ANY change to this user's data
-    // This catches updates to both rewards AND new transactions
+    // Real-time subscription for any changes
     const channel = supabase
       .channel(`user-updates-${user.id}`)
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', filter: `user_id=eq.${user.id}` },
-        () => {
-          console.log("🔄 Real-time sync triggered...");
-          fetchAllData(); // Refresh everything to keep UI perfect
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'user_rewards',
+          filter: `user_id=eq.${user.id}` 
+        },
+        (payload) => {
+          console.log("🔄 Rewards updated:", payload);
+          fetchAllData();
+        }
+      )
+      .on(
+        'postgres_changes',
+        { 
+          event: 'INSERT', 
+          schema: 'public', 
+          table: 'points_transactions',
+          filter: `user_id=eq.${user.id}` 
+        },
+        (payload) => {
+          console.log("💰 New transaction:", payload);
+          fetchAllData();
         }
       )
       .subscribe();
@@ -64,26 +82,71 @@ export function useRewards() {
     };
   }, [user, fetchAllData]);
 
-  // Actions (Keep these simple, let the Subscription handle the UI update)
+  // Claim daily points with result tracking
   const claimDaily = async () => {
-    const { data: res, error } = await claimDailyPoints(user.id);
-    if (error) toast.error(error.message);
-    else toast.success(`+${res.points_awarded} points!`);
-    return { success: !error };
+    if (!user) return { success: false };
+
+    try {
+      const { data: res, error } = await claimDailyPoints(user.id);
+      
+      if (error) {
+        toast.error(error.message);
+        return { success: false };
+      }
+
+      // Set claim result for modal
+      setClaimResult({
+        pointsAwarded: res.points_awarded,
+        newStreak: res.new_streak
+      });
+
+      // Don't show toast - modal will handle celebration
+      // Refresh will happen automatically via subscription
+      
+      return { 
+        success: true, 
+        data: res 
+      };
+    } catch (err) {
+      console.error("Claim error:", err);
+      toast.error("Failed to claim points");
+      return { success: false };
+    }
   };
 
+  // Share stack action
   const shareStack = async (platform = "twitter") => {
-    const { data: res, error } = await recordShare(user.id, "stack", platform);
-    if (error) toast.error(error.message);
-    else toast.success("Shared successfully!");
-    return { success: !error };
+    if (!user) return { success: false };
+
+    try {
+      const { data: res, error } = await recordShare(user.id, "stack", platform);
+      
+      if (error) {
+        toast.error(error.message);
+        return { success: false };
+      }
+
+      toast.success("Share recorded! Points added.");
+      return { success: true };
+    } catch (err) {
+      console.error("Share error:", err);
+      toast.error("Failed to record share");
+      return { success: false };
+    }
   };
+
+  // Clear claim result (called after modal closes)
+  const clearClaimResult = useCallback(() => {
+    setClaimResult(null);
+  }, []);
 
   return {
-    ...data, // Spreads rewards and transactions
+    ...data,
     loading,
     claimDaily,
     shareStack,
-    refetch: fetchAllData
+    refetch: fetchAllData,
+    claimResult,
+    clearClaimResult
   };
 }
