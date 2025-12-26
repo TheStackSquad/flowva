@@ -37,7 +37,8 @@ const Dashboard = () => {
         <h2 className="text-2xl font-bold text-gray-900">Your Rewards Journey</h2>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+      <div className="w-full px-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3
+      gap-1 mb-10">
         <PointsBalanceCard 
           points={rewards?.points} 
           isLoading={loading}
@@ -69,7 +70,7 @@ const Dashboard = () => {
     <div className="flex bg-app-bg min-h-screen">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
-      <div className="flex-grow md:ml-64 px-0 md:px-6 py-3">
+      <div className="flex-grow md:ml-64 md:px-6 py-3">
         <Header onMenuClick={() => setSidebarOpen(true)} userRewards={rewards} />
         <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
         

@@ -150,10 +150,11 @@ const ClaimModal = ({ isOpen, onClose, toolName, points = 25 }) => {
             </label>
             <label 
               htmlFor="file"
-              className="flex flex-col items-center justify-center w-full h-[110px] border-2 border-dashed border-gray-300 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
+              className="flex flex-col items-center justify-center
+              w-full h-auto border-2 border-gray-300 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
             >
               <div className="flex flex-col items-center justify-center">
-                <CloudUpload className="h-8 w-8 text-gray-500 mb-2" />
+                <CloudUpload className="h-5 w-8 text-gray-500 mb-2" />
                 <span className="text-[15px] text-gray-700 font-medium">
                   {file ? file.name : 'Choose file'}
                 </span>
