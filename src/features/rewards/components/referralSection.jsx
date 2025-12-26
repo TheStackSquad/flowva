@@ -69,19 +69,24 @@ const ReferralSection = ({
 
       <div className="p-4 sm:p-6">
         <label className="text-xs font-bold text-gray-500 uppercase mb-2 block">Your Unique Link</label>
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center bg-gray-50 border border-gray-200 rounded-xl p-2 sm:p-1 sm:pl-4 focus-within:border-purple-300 transition-all gap-2">
-          <span className="text-sm text-gray-600 truncate px-2 py-1 sm:py-0" aria-live="polite">{referralLink}</span>
-          <button
-            className={`px-4 py-2.5 sm:py-2 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 flex-shrink-0 ${
-              isCopied ? 'bg-green-100 text-green-600' : 'bg-purple-600 text-white hover:bg-purple-700'
-            }`}
-            onClick={handleCopy}
-            aria-label={isCopied ? 'Link copied' : 'Copy referral link'}
-          >
-            {isCopied ? <Check className="h-4 w-4" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
-            {isCopied ? 'Copied' : 'Copy'}
-          </button>
-        </div>
+       <div className="flex flex-col sm:flex-row items-stretch sm:items-center bg-gray-50 border border-gray-200 rounded-xl p-2 sm:p-1 sm:pl-4 focus-within:border-purple-300 transition-all gap-2">
+    <span 
+        className="text-sm text-gray-600 truncate px-2 py-1 sm:py-0 flex-grow"
+        aria-live="polite"
+    >
+        {referralLink}
+    </span>
+    <button
+        className={`px-4 py-2.5 sm:py-2 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 flex-shrink-0 ${
+            isCopied ? 'bg-green-100 text-green-600' : 'bg-purple-600 text-white hover:bg-purple-700'
+        }`}
+        onClick={handleCopy}
+        aria-label={isCopied ? 'Link copied' : 'Copy referral link'}
+    >
+        {isCopied ? <Check className="h-4 w-4" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
+        {isCopied ? 'Copied' : 'Copy'}
+    </button>
+</div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-6 sm:mt-8">
           {[

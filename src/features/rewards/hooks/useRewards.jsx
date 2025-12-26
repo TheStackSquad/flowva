@@ -7,14 +7,11 @@ import toast from "react-hot-toast";
 
 export function useRewards() {
   const { user } = useAuth();
-  const [data, setData] = useState({
-    rewards: null,
-    transactions: [],
-  });
+  const [data, setData] = useState({ rewards: null, transactions: [] });
   const [loading, setLoading] = useState(true);
   const [claimResult, setClaimResult] = useState(null);
 
-  // Optimized Fetch: Get everything in one go
+  // Fetch user rewards and transaction data
   const fetchAllData = useCallback(async () => {
     if (!user) return;
     
@@ -40,13 +37,12 @@ export function useRewards() {
     }
   }, [user]);
 
-  // Initial load and Real-time Subscription
+  // Subscribe to real-time updates for rewards and transactions
   useEffect(() => {
     if (!user) return;
 
     fetchAllData();
 
-    // Real-time subscription for any changes
     const channel = supabase
       .channel(`user-updates-${user.id}`)
       .on(
@@ -57,10 +53,7 @@ export function useRewards() {
           table: 'user_rewards',
           filter: `user_id=eq.${user.id}` 
         },
-        (payload) => {
-          console.log("🔄 Rewards updated:", payload);
-          fetchAllData();
-        }
+        () => fetchAllData()
       )
       .on(
         'postgres_changes',
@@ -70,51 +63,54 @@ export function useRewards() {
           table: 'points_transactions',
           filter: `user_id=eq.${user.id}` 
         },
-        (payload) => {
-          console.log("💰 New transaction:", payload);
-          fetchAllData();
-        }
+        () => fetchAllData()
       )
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => supabase.removeChannel(channel);
   }, [user, fetchAllData]);
 
-  // Claim daily points with result tracking
-  const claimDaily = async () => {
-    if (!user) return { success: false };
+  // Claim daily points with optimistic update
+const claimDaily = async () => {
+  if (!user) return { success: false };
 
-    try {
-      const { data: res, error } = await claimDailyPoints(user.id);
-      
-      if (error) {
-        toast.error(error.message);
-        return { success: false };
-      }
-
-      // Set claim result for modal
-      setClaimResult({
-        pointsAwarded: res.points_awarded,
-        newStreak: res.new_streak
-      });
-
-      // Don't show toast - modal will handle celebration
-      // Refresh will happen automatically via subscription
-      
-      return { 
-        success: true, 
-        data: res 
-      };
-    } catch (err) {
-      console.error("Claim error:", err);
-      toast.error("Failed to claim points");
+  try {
+    const { data: res, error } = await claimDailyPoints(user.id);
+    
+    if (error) {
+      toast.error(error.message);
       return { success: false };
     }
-  };
 
-  // Share stack action
+    setData(prev => ({
+      ...prev,
+      rewards: {
+        points: prev.rewards.points + res.points_awarded,
+        streak_days: res.new_streak,
+        last_claim_date: new Date().toISOString().split('T')[0]
+      }
+    }));
+
+    setClaimResult({
+      success: true,
+      pointsAwarded: res.points_awarded,
+      newStreak: res.new_streak
+    });
+
+    toast.success(`+${res.points_awarded} points! 🎉`);
+
+    return { 
+      success: true, 
+      data: res 
+    };
+  } catch (err) {
+    console.error("Claim error:", err);
+    toast.error("Failed to claim points");
+    return { success: false };
+  }
+};
+
+  // Record social share for points
   const shareStack = async (platform = "twitter") => {
     if (!user) return { success: false };
 
@@ -135,10 +131,8 @@ export function useRewards() {
     }
   };
 
-  // Clear claim result (called after modal closes)
-  const clearClaimResult = useCallback(() => {
-    setClaimResult(null);
-  }, []);
+  // Clear claim result after modal closes
+  const clearClaimResult = useCallback(() => setClaimResult(null), []);
 
   return {
     ...data,
